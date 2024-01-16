@@ -18,7 +18,7 @@ def convert_state_dict(state_dict: Dict[str, torch.Tensor], dtype: torch.dtype =
     converted["lm_head.weight"] = get_and_remove("output.weight")
     converted["transformer.ln_f.scale"] = get_and_remove("norm.weight")
 
-    for layer_idx in sorted(set([k.split(".")[1] for k in state_dict if k.startswith("layers")])):
+    for layer_idx in sorted({k.split(".")[1] for k in state_dict if k.startswith("layers")}):
         print(layer_idx)
 
         # attention
@@ -59,5 +59,7 @@ def convert_weights(llama_ckpt, *, output_st: Path = Path("llama.safetensors"), 
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        raise ValueError(f"usage: convert_checkpoint.py ..../LLaMA/7B/consolidated.00.pth")
+        raise ValueError(
+            "usage: convert_checkpoint.py ..../LLaMA/7B/consolidated.00.pth"
+        )
     convert_weights(sys.argv[1])
